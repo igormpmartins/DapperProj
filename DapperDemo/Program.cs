@@ -9,7 +9,8 @@ builder.Services.AddControllersWithViews();
 
 var connStr = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(connStr));
-builder.Services.AddScoped<ICompanyRepository, CompanyRepositoryEF>();
+//builder.Services.AddScoped<ICompanyRepository, CompanyRepositoryEF>();
+builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
 
 var app = builder.Build();
 
