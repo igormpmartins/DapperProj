@@ -24,7 +24,7 @@ namespace DapperDemo.Controllers
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-              return View(repository.GetAll());
+            return View(repository.GetAll());
         }
 
         // GET: Companies/Details/5
