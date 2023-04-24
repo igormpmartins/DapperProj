@@ -16,19 +16,28 @@ namespace DapperDemo.Controllers
     {
         private readonly IEmployeeRepository employeeRepository;
         private readonly ICompanyRepository companyRepository;
+        private readonly IBonusRepository bonusRepository;
 
         [BindProperty]
         public Employee Employee { get; set; }
 
-        public EmployeesController(IEmployeeRepository employeeRepository, ICompanyRepository repository)
+        public EmployeesController(IEmployeeRepository employeeRepository, 
+            ICompanyRepository companyRepository,
+            IBonusRepository bonusRepository)
         {
             this.employeeRepository = employeeRepository;
-            this.companyRepository = repository;
+            this.companyRepository = companyRepository;
+            this.bonusRepository = bonusRepository;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int companyId = 0)
         {
-            return View(employeeRepository.GetAll());
+            //var employees = employeeRepository.GetAll();
+            //foreach (var employee in employees)
+            //    employee.Company = companyRepository.Find(employee.CompanyId);
+
+            var employees = bonusRepository.GetEmployeesWithCompany(companyId);
+            return View(employees);
         }
 
         public IActionResult Create()
@@ -55,7 +64,8 @@ namespace DapperDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                employeeRepository.Add(Employee);
+                //employeeRepository.Add(Employee);
+                await employeeRepository.AddAsync(Employee);
                 return RedirectToAction(nameof(Index));
             }
 

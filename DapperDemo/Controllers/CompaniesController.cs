@@ -14,17 +14,24 @@ namespace DapperDemo.Controllers
 {
     public class CompaniesController : Controller
     {
-        private readonly ICompanyRepository repository;
+        private readonly ICompanyRepository companyRepository;
+        private readonly IEmployeeRepository employeeRepository;
+        private readonly IBonusRepository bonusRepository;
+        private readonly IDapperGenericRepository dapperGenericRepository;
 
-        public CompaniesController(ICompanyRepository repository)
+        public CompaniesController(ICompanyRepository repository, IEmployeeRepository employeeRepository,
+            IBonusRepository bonusRepository, IDapperGenericRepository dapperGenericRepository)
         {
-            this.repository = repository;
+            this.companyRepository = repository;
+            this.employeeRepository = employeeRepository;
+            this.bonusRepository = bonusRepository;
+            this.dapperGenericRepository = dapperGenericRepository;
         }
 
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            return View(repository.GetAll());
+            return View(companyRepository.GetAll());
         }
 
         // GET: Companies/Details/5
@@ -33,8 +40,7 @@ namespace DapperDemo.Controllers
             if (id == null)
                 return NotFound();
 
-            var company = repository.Find(id.GetValueOrDefault());
-
+            var company = bonusRepository.GetCompanyWithEmployees(id.GetValueOrDefault());
             if (company == null)
                 return NotFound();
 
@@ -56,7 +62,7 @@ namespace DapperDemo.Controllers
         {
             if (ModelState.IsValid)
             {
-                repository.Add(company);
+                companyRepository.Add(company);
                 return RedirectToAction(nameof(Index));
             }
             return View(company);
@@ -68,7 +74,8 @@ namespace DapperDemo.Controllers
             if (id == null)
                 return NotFound();
 
-            var company = repository.Find(id.GetValueOrDefault());
+            var company = companyRepository.Find(id.GetValueOrDefault());
+            //var company = dapperGenericRepository.Single<Company>("usp_GetCompany", new { CompanyId = id.GetValueOrDefault() });
             if (company == null)
                 return NotFound();
 
@@ -87,7 +94,7 @@ namespace DapperDemo.Controllers
 
             if (ModelState.IsValid)
             {
-                repository.Update(company);
+                companyRepository.Update(company);
                 return RedirectToAction(nameof(Index));
             }
             return View(company);
@@ -99,7 +106,7 @@ namespace DapperDemo.Controllers
             if (id == null)
                 return NotFound();
 
-            repository.Remove(id.GetValueOrDefault());
+            companyRepository.Remove(id.GetValueOrDefault());
 
             return RedirectToAction(nameof(Index));
         }

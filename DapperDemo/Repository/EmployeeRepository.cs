@@ -26,6 +26,16 @@ namespace DapperDemo.Repository
             return employee;
         }
 
+        public async Task<Employee> AddAsync(Employee employee)
+        {
+            var sql = "INSERT INTO Employees (Name, Title, Email, Phone, CompanyId) VALUES(@Name, @Title, @Email, @Phone, @CompanyId);" +
+                " SELECT CAST(SCOPE_IDENTITY() as INT);";
+
+            var result = await db.QueryAsync<int>(sql, employee);
+            employee.EmployeeId = result.Single();
+            return employee;
+        }
+
         public Employee Find(int id)
         {
             var sql = "SELECT * FROM Employees WHERE EmployeeId = @Id";
